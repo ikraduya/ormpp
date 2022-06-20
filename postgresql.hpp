@@ -20,7 +20,7 @@ class postgresql {
 public:
   ~postgresql() { disconnect(); }
 
-  // ip, user, pwd, db, timeout  the sequence must be fixed like this
+  // ip, user, pwd, db, timeout, port  the sequence must be fixed like this
   template <typename... Args> bool connect(Args &&...args) {
     auto sql = ""s;
     sql = generate_conn_sql(std::make_tuple(std::forward<Args>(args)...));
@@ -326,6 +326,10 @@ private:
     } else if constexpr (SIZE == 5) {
       return generate_conn_sql(std::make_tuple("host", "user", "password",
                                                "dbname", "connect_timeout"),
+                               tp, std::make_index_sequence<SIZE>{});
+    } else if constexpr (SIZE == 6) {
+      return generate_conn_sql(std::make_tuple("host", "user", "password",
+                                               "dbname", "connect_timeout", "port"),
                                tp, std::make_index_sequence<SIZE>{});
     } else {
       return "";
